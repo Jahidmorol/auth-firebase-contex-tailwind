@@ -1,14 +1,37 @@
 import React from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
 
 const Register = () => {
+  const { user, createUser, signInGoogle} = useContext(AuthContext);
+  // console.log(createUser);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
     const name = form.name.value;
-    // console.log(email,password,name);
+
+    createUser(email, password)
+      .then((result) => {
+        const loggedUser = result.user;
+        console.log(loggedUser);
+        form.reset();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const handleSingWithGoogle = () => {
+    signInGoogle()
+    .then(result => {
+      const loggedUser = result.user;
+      console.log(loggedUser);
+    })
+    .catch(error => console.error(error.message))
   };
 
   return (
@@ -60,6 +83,14 @@ const Register = () => {
                 </a>
               </label>
             </div>
+            <div>
+              <button
+                onClick={handleSingWithGoogle}
+                className="btn bg-yellow-400 border-none"
+              >
+                SignIn With Google
+              </button>
+            </div>
             <div className="flex items-center gap-0">
               <p>Alrady have an account?</p>
               <Link to="/Login">
@@ -67,7 +98,7 @@ const Register = () => {
               </Link>
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary">Login</button>
+              <button className="btn btn-primary">Register</button>
             </div>
           </form>
         </div>
